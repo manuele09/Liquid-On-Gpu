@@ -113,7 +113,7 @@ cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer
 }
 
 
-void free_neurons(Layer_device *neurons)
+void free_neurons_device(Layer_device *neurons)
 {
     cl_int err;
     //mettere i check

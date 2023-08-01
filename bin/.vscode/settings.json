@@ -59,6 +59,7 @@
     "ocl_boiler.h": "c",
     "stdbool.h": "c",
     "neuron.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "neuron_device.h": "c"
   }
 }

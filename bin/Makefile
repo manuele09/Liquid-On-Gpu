@@ -1,27 +1,36 @@
 CC = gcc
 CFLAGS = -O3 -march=native -g -Wall -Wextra
-LDLIBS = -lOpenCL
+LDLIBS = -lOpenCL -lm
 
-# Ottieni la lista di tutti i file sorgente .c nella directory corrente
-SRCS = $(wildcard *.c)
+BIN = main
 
-# Sostituisci l'estensione .c con .o per ottenere la lista dei file oggetto
-OBJS = $(SRCS:.c=.o)
+SRCS_HOST = $(wildcard bin_host/*.c)
+SRCS_DEVICE = $(wildcard bin_device/*.c)
+SRCS_MAIN = main.c
 
-# Nome dell'eseguibile da creare
-EXEC = main
+HDRS_HOST = $(wildcard bin_host/*.h)
+HDRS_DEVICE = $(wildcard bin_device/*.h)
 
-# Regola predefinita per creare l'eseguibile
-all: $(EXEC)
+# Object files
+OBJS_HOST = $(SRCS_HOST:.c=.o)
+OBJS_DEVICE = $(SRCS_DEVICE:.c=.o)
+OBJS_MAIN = $(SRCS_MAIN:.c=.o)
 
-# Regola per creare l'eseguibile utilizzando i file oggetto
-$(EXEC): $(OBJS)
+all: $(BIN)
+
+$(BIN): $(OBJS_HOST) $(OBJS_DEVICE) $(OBJS_MAIN)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-# Regola generica per compilare i file sorgente in file oggetto
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
+bin_host/%.o: bin_host/%.c $(HDRS_HOST)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-# Pulizia dei file oggetto e dell'eseguibile
+bin_device/%.o: bin_device/%.c $(HDRS_DEVICE)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f $(OBJS_HOST) $(OBJS_DEVICE) $(OBJS_MAIN) $(BIN)
+
+.PHONY: all clean

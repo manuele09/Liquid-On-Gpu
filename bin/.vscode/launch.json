@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/emanuele/OneDrive/Linux/Università/Tesi/LiquidOnGpu/bin",
-      "program": "/home/emanuele/OneDrive/Linux/Università/Tesi/LiquidOnGpu/bin/build/Debug/outDebug",
+      "cwd": "/home/emanuele/OneDrive/Linux/Università/Tesi/Liquid-On-Gpu/bin",
+      "program": "/home/emanuele/OneDrive/Linux/Università/Tesi/Liquid-On-Gpu/bin/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
