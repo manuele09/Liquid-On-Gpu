@@ -1,0 +1,15 @@
+void kernel initialize_neurons(global float *V, global float *U,
+                               global float *a, global float *b,
+                               global float *c, global float *d, int start_idx,
+                               int end_idx, float init_v, float init_u,
+                               float init_a, float init_b, float init_c,
+                               float init_d) {
+  int i = get_global_id(0);
+//   printf("i = %d\n", i);
+  V[i] = init_v;
+  U[i] = init_u;
+  a[i] = init_a;
+  b[i] = init_b;
+  c[i] = init_c;
+  d[i] = init_d;
+}
