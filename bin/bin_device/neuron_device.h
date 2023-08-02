@@ -65,7 +65,11 @@ Layer_device *create_neurons_device(cl_kernel kernel, cl_command_queue que, cl_c
 
 cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer_device *neurons, cl_int start_idx, cl_int end_idx, cl_float init_v, cl_float init_u, cl_float init_a, cl_float init_b, cl_float init_c, cl_float init_d, cl_int start_neuron_id, cl_int layer_id);
 
+Layer_device *combine_layers_device(cl_context ctx, cl_command_queue que, Layer_device **layers_device, int num_layers);
+
 Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device);
+
+Layer_device *neuron_host_to_device(cl_context ctx, cl_command_queue que, Layer *layer_host);
 
 /**
  * @brief Free the memory allocated for the neurons.

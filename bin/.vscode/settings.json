@@ -60,6 +60,7 @@
     "stdbool.h": "c",
     "neuron.h": "c",
     "stdio.h": "c",
-    "neuron_device.h": "c"
+    "neuron_device.h": "c",
+    "visualize_device.h": "c"
   }
 }

@@ -119,6 +119,16 @@ cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer
     return event;
 }
 
+Layer_device *combine_layers_device(cl_context ctx, cl_command_queue que, Layer_device **layers_device, int num_layers)
+{
+    Layer **layers_host = (Layer **)calloc(num_layers, sizeof(Layer *));
+    for (int i = 0; i < num_layers; i++)
+        layers_host[i] = neuron_device_to_host(que, layers_device[i]);
+
+    Layer *combined_host = combine_layers(layers_host, num_layers);
+    return neuron_host_to_device(ctx, que, combined_host);
+}
+
 Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device)
 {
     Layer *layer_host = (Layer *)calloc(1, sizeof(Layer));
@@ -165,6 +175,67 @@ Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device)
     OCL_CHECK(err, "read d");
 
     return layer_host;
+}
+
+Layer_device *neuron_host_to_device(cl_context ctx, cl_command_queue que, Layer *layer_host)
+{
+    cl_int err;
+
+    Layer_device *layer_device = (Layer_device *)calloc(1, sizeof(Layer_device));
+
+    layer_device->n_neurons = layer_host->n_neurons;
+    layer_device->step = layer_host->step;
+    layer_device->layer_id = layer_host->layer_id;
+
+    int n_neurons = layer_device->n_neurons;
+    layer_device->id = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_int), NULL, &err);
+    OCL_CHECK(err, "Id Allocation");
+    layer_device->neuron_layer_id = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_int), NULL, &err);
+    OCL_CHECK(err, "Layer_id Allocation");
+    layer_device->last_spike = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_int), NULL, &err);
+    OCL_CHECK(err, "Spike Allocation");
+    layer_device->V = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "V Allocation");
+    layer_device->U = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "U Allocation");
+    layer_device->I = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "I Allocation");
+    layer_device->I_bias = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "I_bias Allocation");
+    layer_device->a = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "a Allocation");
+    layer_device->b = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "b Allocation");
+    layer_device->c = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "c Allocation");
+    layer_device->d = clCreateBuffer(ctx, CL_MEM_READ_WRITE, n_neurons * sizeof(cl_float), NULL, &err);
+    OCL_CHECK(err, "d Allocation");
+
+    err = clEnqueueWriteBuffer(que, layer_device->id, CL_TRUE, 0, n_neurons * sizeof(cl_int), layer_host->id, 0, NULL, NULL);
+    OCL_CHECK(err, "write id");
+    err = clEnqueueWriteBuffer(que, layer_device->neuron_layer_id, CL_TRUE, 0, n_neurons * sizeof(cl_int), layer_host->neuron_layer_id, 0, NULL, NULL);
+    OCL_CHECK(err, "write neuron_layer_id");
+    err = clEnqueueWriteBuffer(que, layer_device->last_spike, CL_TRUE, 0, n_neurons * sizeof(cl_int), layer_host->last_spike, 0, NULL, NULL);
+    OCL_CHECK(err, "write last_spike");
+    err = clEnqueueWriteBuffer(que, layer_device->V, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->V, 0, NULL, NULL);
+    OCL_CHECK(err, "write V");
+    err = clEnqueueWriteBuffer(que, layer_device->U, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->U, 0, NULL, NULL);
+    OCL_CHECK(err, "write U");
+    err = clEnqueueWriteBuffer(que, layer_device->I, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->I, 0, NULL, NULL);
+    OCL_CHECK(err, "write I");
+    err = clEnqueueWriteBuffer(que, layer_device->I_bias, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->I_bias, 0, NULL, NULL);
+    OCL_CHECK(err, "write I_bias");
+    err = clEnqueueWriteBuffer(que, layer_device->a, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->a, 0, NULL, NULL);
+    OCL_CHECK(err, "write a");
+    err = clEnqueueWriteBuffer(que, layer_device->b, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->b, 0, NULL, NULL);
+    OCL_CHECK(err, "write b");
+    err = clEnqueueWriteBuffer(que, layer_device->c, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->c, 0, NULL, NULL);
+    OCL_CHECK(err, "write c");
+    err = clEnqueueWriteBuffer(que, layer_device->d, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->d, 0, NULL, NULL);
+    OCL_CHECK(err, "write d");
+
+    
+    return layer_device;
 }
 
 void free_neurons_device(Layer_device *neurons)
