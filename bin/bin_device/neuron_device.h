@@ -2,6 +2,7 @@
 #define NEURON_H 1
 
 #include "ocl_boiler.h"
+#include "../bin_host/neuron.h"
 #include <stdbool.h>
 struct Layer_host
 {
@@ -62,7 +63,9 @@ typedef struct Layer_device Layer_device;
  */
 Layer_device *create_neurons_device(cl_kernel kernel, cl_command_queue que, cl_context ctx, int num_neurons, bool new_neurons_ids);
 
-cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer_device *neurons, int start_idx, int end_idx, float init_v, float init_u, float init_a, float init_b, float init_c, float init_d);
+cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer_device *neurons, cl_int start_idx, cl_int end_idx, cl_float init_v, cl_float init_u, cl_float init_a, cl_float init_b, cl_float init_c, cl_float init_d, cl_int start_neuron_id, cl_int layer_id);
+
+Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device);
 
 /**
  * @brief Free the memory allocated for the neurons.

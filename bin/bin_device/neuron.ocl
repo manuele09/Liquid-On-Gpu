@@ -1,15 +1,22 @@
-void kernel initialize_neurons(global float *V, global float *U,
-                               global float *a, global float *b,
-                               global float *c, global float *d, int start_idx,
-                               int end_idx, float init_v, float init_u,
-                               float init_a, float init_b, float init_c,
-                               float init_d) {
+void kernel initialize_neurons(
+    int start_idx, int end_idx, int start_neuron_id, int layer_id,
+    global int *id, global int *neuron_layer_id, global int *last_spike,
+    global float *V, global float *U, global float *a, global float *b,
+    global float *c, global float *d, float init_v, float init_u, float init_a,
+    float init_b, float init_c, float init_d) {
   int i = get_global_id(0);
-//   printf("i = %d\n", i);
+  get_global_offset(0);
+  //   printf("i = %d\n", i);
+  last_spike[i] = 0;
   V[i] = init_v;
   U[i] = init_u;
   a[i] = init_a;
   b[i] = init_b;
   c[i] = init_c;
   d[i] = init_d;
+
+  if (start_neuron_id != -1)
+    id[i] = start_neuron_id + i - get_global_offset(0);
+  if (layer_id != -1)
+    neuron_layer_id[i] = layer_id;
 }
