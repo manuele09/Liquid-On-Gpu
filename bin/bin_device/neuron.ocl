@@ -5,7 +5,6 @@ void kernel initialize_neurons(
     global float *c, global float *d, float init_v, float init_u, float init_a,
     float init_b, float init_c, float init_d) {
   int i = get_global_id(0);
-  get_global_offset(0);
   //   printf("i = %d\n", i);
   last_spike[i] = 0;
   V[i] = init_v;
@@ -19,4 +18,25 @@ void kernel initialize_neurons(
     id[i] = start_neuron_id + i - get_global_offset(0);
   if (layer_id != -1)
     neuron_layer_id[i] = layer_id;
+}
+
+void kernel simulate_neurons(global float *V, global float *U, global float *I,
+                             global float *I_bias, global int *last_spike,
+                             global float *a, global float *b, global float *c,
+                             global float *d, float dt, int step) {
+
+  int i = get_global_id(0);
+
+  float v = V[i];
+  float u = U[i];
+  float i_bias = I_bias[i];
+
+  if (v >= 30.0f) {
+    V[i] = c[i];
+    U[i] += d[i];
+    last_spike[i] = step;
+  } else {
+    V[i] += dt * (0.04f * v * v + 5.0f * v + 140.0f - u + I[i] + i_bias);
+    U[i] += dt * a[i] * (b[i] * v - u);
+  }
 }

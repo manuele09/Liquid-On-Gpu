@@ -67,6 +67,8 @@ cl_event initialize_neurons_device(cl_kernel kernel, cl_command_queue que, Layer
 
 Layer_device *combine_layers_device(cl_context ctx, cl_command_queue que, Layer_device **layers_device, int num_layers);
 
+void simulate_neurons_device(cl_command_queue que, cl_kernel kernel, Layer_device *neurons, int steps, float dt);
+
 Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device);
 
 Layer_device *neuron_host_to_device(cl_context ctx, cl_command_queue que, Layer *layer_host);

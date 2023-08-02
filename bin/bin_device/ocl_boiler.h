@@ -45,7 +45,7 @@ const char* clErrorString(cl_int err);
  */
 void ocl_check(cl_int err, const char *msg, ...);
 
-#define OCL_CHECK(err, msg) ocl_check(err, "%s:%s:%d: %s %s", __FILE__, __func__, __LINE__, "\033[0;31merror\033[0m:", msg)
+#define OCL_CHECK(err, msg) ocl_check(err, "%s:%s:%d: %s %s", __FILE__, __func__, __LINE__ - 1, "\033[0;31merror\033[0m:", msg)
 
 
 // Return the ID of the platform specified in the OCL_PLATFORM

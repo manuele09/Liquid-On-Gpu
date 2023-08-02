@@ -129,6 +129,48 @@ Layer_device *combine_layers_device(cl_context ctx, cl_command_queue que, Layer_
     return neuron_host_to_device(ctx, que, combined_host);
 }
 
+void simulate_neurons_device(cl_command_queue que, cl_kernel kernel, Layer_device *neurons, int steps, cl_float dt)
+{
+    size_t global_size[] = {steps};
+
+    cl_int err;
+    int index = 0;
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->V);
+    OCL_CHECK(err, "V set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->U);
+    OCL_CHECK(err, "U set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->I);
+    OCL_CHECK(err, "I set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->I_bias);
+    OCL_CHECK(err, "I_bias set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->last_spike);
+    OCL_CHECK(err, "last_spike set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->a);
+    OCL_CHECK(err, "a set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->b);
+    OCL_CHECK(err, "b set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->c);
+    OCL_CHECK(err, "c set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_mem), &neurons->d);
+    OCL_CHECK(err, "d set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_float), &dt);
+    OCL_CHECK(err, "dt set arg");
+    err = clSetKernelArg(kernel, index++, sizeof(cl_int), &neurons->step);
+    OCL_CHECK(err, "step set arg");
+
+    cl_event event;
+    float tempo = 0;
+    for (int i = 0; i < steps; i++)
+    {
+        err = clEnqueueNDRangeKernel(que, kernel, 1, NULL, global_size, NULL, 0, NULL, &event);
+        clWaitForEvents(1, &event);
+        tempo += runtime_ms(event);
+        OCL_CHECK(err, "enqueue init_neurons");
+        neurons->step++;
+    }
+    printf("Tempo di esecuzione: %f millisecondi\n", tempo);
+}
+
 Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device)
 {
     Layer *layer_host = (Layer *)calloc(1, sizeof(Layer));
@@ -234,7 +276,6 @@ Layer_device *neuron_host_to_device(cl_context ctx, cl_command_queue que, Layer 
     err = clEnqueueWriteBuffer(que, layer_device->d, CL_TRUE, 0, n_neurons * sizeof(cl_float), layer_host->d, 0, NULL, NULL);
     OCL_CHECK(err, "write d");
 
-    
     return layer_device;
 }
 
