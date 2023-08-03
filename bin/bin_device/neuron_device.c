@@ -173,6 +173,8 @@ void simulate_neurons_device(cl_command_queue que, cl_kernel kernel, Layer_devic
 
 Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device)
 {
+    if (layer_device == NULL)
+        return NULL;
     Layer *layer_host = (Layer *)calloc(1, sizeof(Layer));
 
     layer_host->n_neurons = layer_device->n_neurons;
@@ -221,6 +223,8 @@ Layer *neuron_device_to_host(cl_command_queue que, Layer_device *layer_device)
 
 Layer_device *neuron_host_to_device(cl_context ctx, cl_command_queue que, Layer *layer_host)
 {
+    if (layer_host == NULL)
+        return NULL;
     cl_int err;
 
     Layer_device *layer_device = (Layer_device *)calloc(1, sizeof(Layer_device));

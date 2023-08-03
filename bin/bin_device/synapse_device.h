@@ -28,8 +28,13 @@ struct Synapse_device
 };
 typedef struct Synapse_device Synapse_device;
 
-Synapse_device *create_synapses_device(cl_context ctx, int n_synapses, bool new_synapses_ids);
+Synapse_device *create_synapses_device(cl_context ctx, cl_command_queue que, int n_synapses, bool new_synapses_ids);
 
 Synapse *synapse_device_to_host(cl_command_queue que, Synapse_device *syn_device);
 
+Synapse_device *synapse_host_to_device(cl_context ctx, cl_command_queue que, Synapse *syn_host);
+
+Synapse_device *connect_device(cl_context ctx, cl_command_queue que, Layer_device *pre_layer_device, Layer_device *post_layer_device, int *conn_matrix);
+
+void free_synapses_device(Synapse_device *syn);
 #endif

@@ -27,7 +27,8 @@ int main(void)
     cl_kernel simulate_kernel = clCreateKernel(prog, "simulate_neurons", &err);
     OCL_CHECK(err, "create kernel simulate_neurons");
 
-    // Layer_device *layer_device = create_neurons_device(init_kernel, que, ctx, 10000000, true);
+    Layer_device *layer_device_1 = create_neurons_device(init_kernel, que, ctx, 10, true);
+    Layer_device *layer_device_2 = create_neurons_device(init_kernel, que, ctx, 10, true);
     // // visualize_neuron_layer_device(que, layer_device);
     // simulate_neurons_device(que, simulate_kernel, layer_device, steps, 0.1f);
 
@@ -40,8 +41,13 @@ int main(void)
     // printf("Tempo di esecuzione host: %f millisecondi\n", time_taken);
     // free_neurons_device(layer_device);
 
-    Synapse_device *syn_device = create_synapses_device(ctx, 10, true);
-    visualize_synapse_device(que, syn_device);
+    int *conn = malloc(sizeof(int) * 10 * 10);
+    for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
+            conn[i * 10 + j] = 1;
+    Synapse_device *syn_conn = connect_device(ctx, que, layer_device_1, layer_device_2, conn);
+    visualize_synapse_device(que, syn_conn);
+    free_synapses_device(syn_conn);
 
     clReleaseDevice(d);
     clReleaseKernel(init_kernel);
