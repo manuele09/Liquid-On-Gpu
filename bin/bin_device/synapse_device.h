@@ -36,5 +36,7 @@ Synapse_device *synapse_host_to_device(cl_context ctx, cl_command_queue que, Syn
 
 Synapse_device *connect_device(cl_context ctx, cl_command_queue que, Layer_device *pre_layer_device, Layer_device *post_layer_device, int *conn_matrix);
 
+Synapse_device *set_neurons_location_device(cl_context ctx, cl_command_queue que, Layer_device *layer_device, Synapse_device *synpase_device);
+
 void free_synapses_device(Synapse_device *syn);
 #endif

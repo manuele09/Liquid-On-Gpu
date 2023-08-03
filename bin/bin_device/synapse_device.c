@@ -166,6 +166,20 @@ Synapse_device *connect_device(cl_context ctx, cl_command_queue que, Layer_devic
     return syn_device;
 }
 
+Synapse_device * set_neurons_location_device(cl_context ctx, cl_command_queue que, Layer_device *layer_device, Synapse_device *synpase_device)
+{
+    Layer *layer_host = neuron_device_to_host(que, layer_device);
+    Synapse *syn_host = synapse_device_to_host(que, synpase_device);
+
+    set_neurons_location(layer_host, syn_host);
+
+    Synapse_device *syn_dev = synapse_host_to_device(ctx, que, syn_host);
+
+    free_neurons(layer_host);
+    free_synapses(syn_host);
+    return syn_dev;
+}
+
 void free_synapses_device(Synapse_device *syn)
 {
     cl_int err;
