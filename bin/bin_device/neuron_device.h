@@ -4,28 +4,7 @@
 #include "ocl_boiler.h"
 #include "../bin_host/neuron.h"
 #include <stdbool.h>
-struct Layer_host
-{
-    int *id;              // unique id for each neuron
-    int *neuron_layer_id; // the layer id of provenience of the neuron, can be different from the layer id of the layer.
-                          // The layer of provenience may not exists anymore. Storing the layer id of provenience
-                          // is useful to keep track of the layer composition of the final (combined) layer.
-    int *last_spike;      // timestamp of last spike emitted
 
-    float *V;      // membrane potential
-    float *U;      // recovery variable
-    float *I;      // input current
-    float *I_bias; // bias current
-    float *a;      // parameter
-    float *b;      // parameter
-    float *c;      // parameter
-    float *d;      // parameter
-
-    int n_neurons; // number of neurons
-    int step;      // current simulation step
-    int layer_id;  // unique id for each layer
-};
-typedef struct Layer_host Layer_host;
 
 struct Layer_device
 {

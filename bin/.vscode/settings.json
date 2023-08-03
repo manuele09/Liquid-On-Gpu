@@ -56,11 +56,13 @@
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "files.associations": {
+    "*.embeddedhtml": "html",
     "ocl_boiler.h": "c",
     "stdbool.h": "c",
     "neuron.h": "c",
     "stdio.h": "c",
     "neuron_device.h": "c",
-    "visualize_device.h": "c"
+    "visualize_device.h": "c",
+    "synapse_device.h": "c"
   }
 }
